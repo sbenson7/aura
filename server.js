@@ -23,32 +23,42 @@ app.get('/', function (req, res) {
 
 // POST route from contact form
 app.post('/contactForm', function (req, res) {
-  let mailOpts, smtpTrans;
-  console.log(req.body.subject)
-  smtpTrans = nodemailer.createTransport({
-    host: 'smtp.gmail.com',
-    port: 465,
-    secure: true,
-    auth: {
-       user: process.env.EMAIL,
-       pass: process.env.PASSWORD
-    }
-  });
-  mailOpts = {
-    from: req.body.name + ' &lt;' + req.body.email + '&gt;',
+  //    
+  const sgMail = require('@sendgrid/mail');
+  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+  const msg = {
     to: process.env.EMAIL,
+    from: req.body.email,
     subject: req.body.subject,
-    text: `${req.body.name} (${req.body.email}) says: ${req.body.message}`
+    text: req.body.fname + ' ' + req.body.lname + '(' + req.body.email + ') says: ' + req.body.message,
   };
-  smtpTrans.sendMail(mailOpts, function (error, response) {
-    if (error) {
-      console.log(error)
-      res.redirect("/" );
-    }
-    else {
-      res.redirect("/" );
-    }
-  });
+  sgMail.send(msg);
+  // let mailOpts, smtpTrans;
+  // smtpTrans = nodemailer.createTransport({
+  //   service: "Godaddy",
+  //   host: "smtpout.secureserver.net",  
+  //   port: 3535,
+  //   secure: false,
+  //   auth: {
+  //      user: process.env.EMAIL,
+  //      pass: process.env.PASSWORD
+  //   }
+  // });
+  // mailOpts = {
+  //   from: '&lt;' + req.body.email + '&gt;',
+  //   to: process.env.EMAIL,
+  //   subject: req.body.subject,
+  //   text: `${req.body.fname + ' ' + req.body.lname} (${req.body.email}) says: ${req.body.message}`
+  // };
+  // smtpTrans.sendMail(mailOpts, function (error, response) {
+  //   if (error) {
+  //     console.log(error)
+  //     res.redirect("/" );
+  //   }
+  //   else {
+       res.redirect("/" );
+  //   }
+  // });
 });
 
 
