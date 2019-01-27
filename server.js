@@ -23,16 +23,68 @@ app.get('/', function (req, res) {
 
 // POST route from contact form
 app.post('/contactForm', function (req, res) {
-  //    
-  const sgMail = require('@sendgrid/mail');
-  sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-  const msg = {
-    to: process.env.EMAIL,
-    from: req.body.email,
-    subject: req.body.subject,
-    text: req.body.fname + ' ' + req.body.lname + '(' + req.body.email + ') says: ' + req.body.message,
-  };
-  sgMail.send(msg);
+  try {
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const msg = {
+      to: process.env.EMAIL,
+      from: req.body.email,
+      cc: '',
+      subject: req.body.subject,
+      text: req.body.fname + ' ' + req.body.lname + '(' + req.body.email + ') says: ' + req.body.message
+    }
+      sgMail.send(msg);
+  } catch(error) {
+    var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
+    var request = sg.emptyRequest({
+      method: 'POST',
+      path: '/v3/mail/send',
+      body: {
+        personalizations: [
+          {
+            to: [
+              {
+                email: process.env.EMAIL,
+              },
+            ],
+            subject: req.body.subject,
+          },
+        ],
+        from: {
+          email: req.body.email,
+        },
+        content: [
+          {
+            type: 'text/plain',
+            value: req.body.fname + ' ' + req.body.lname + '(' + req.body.email + ') says: ' + req.body.message,
+          },
+        ],
+      },
+    });
+
+    //With promise
+    sg.API(request)
+      .then(response => {
+        console.log(response.statusCode);
+        console.log(response.body);
+        console.log(response.headers);
+      })
+      .catch(error => {
+        //error is an instance of SendGridError
+        //The full response is attached to error.response
+        console.log(error.response.statusCode);
+      });
+
+    //With callback
+    sg.API(request, function(error, response) {
+      if (error) {
+        console.log('Error response received');
+      }
+      console.log(response.statusCode);
+      console.log(response.body);
+      console.log(response.headers);
+    });
+  }
   // let mailOpts, smtpTrans;
   // smtpTrans = nodemailer.createTransport({
   //   service: "Godaddy",
