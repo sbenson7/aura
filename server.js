@@ -24,17 +24,6 @@ app.get('/', function (req, res) {
 // POST route from contact form
 app.post('/contactForm', function (req, res) {
   try {
-    const sgMail = require('@sendgrid/mail');
-    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
-    const msg = {
-      to: process.env.EMAIL,
-      from: req.body.email,
-      cc: '',
-      subject: req.body.subject,
-      text: req.body.fname + ' ' + req.body.lname + '(' + req.body.email + ') says: ' + req.body.message
-    }
-      sgMail.send(msg);
-  } catch(error) {
     var sg = require('sendgrid')(process.env.SENDGRID_API_KEY);
     var request = sg.emptyRequest({
       method: 'POST',
@@ -71,6 +60,17 @@ app.post('/contactForm', function (req, res) {
       console.log(response.body);
       console.log(response.headers);
     });
+  } catch(error) {
+    const sgMail = require('@sendgrid/mail');
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+    const msg = {
+      to: process.env.EMAIL,
+      from: req.body.email,
+      cc: '',
+      subject: req.body.subject,
+      text: req.body.fname + ' ' + req.body.lname + '(' + req.body.email + ') says: ' + req.body.message
+    }
+    sgMail.send(msg);
   }
   // let mailOpts, smtpTrans;
   // smtpTrans = nodemailer.createTransport({
