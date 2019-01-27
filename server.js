@@ -62,19 +62,6 @@ app.post('/contactForm', function (req, res) {
       },
     });
 
-    //With promise
-    sg.API(request)
-      .then(response => {
-        console.log(response.statusCode);
-        console.log(response.body);
-        console.log(response.headers);
-      })
-      .catch(error => {
-        //error is an instance of SendGridError
-        //The full response is attached to error.response
-        console.log(error.response.statusCode);
-      });
-
     //With callback
     sg.API(request, function(error, response) {
       if (error) {
