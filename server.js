@@ -72,32 +72,7 @@ app.post('/contactForm', function (req, res) {
     }
     sgMail.send(msg);
   }
-  // let mailOpts, smtpTrans;
-  // smtpTrans = nodemailer.createTransport({
-  //   service: "Godaddy",
-  //   host: "smtpout.secureserver.net",  
-  //   port: 3535,
-  //   secure: false,
-  //   auth: {
-  //      user: process.env.EMAIL,
-  //      pass: process.env.PASSWORD
-  //   }
-  // });
-  // mailOpts = {
-  //   from: '&lt;' + req.body.email + '&gt;',
-  //   to: process.env.EMAIL,
-  //   subject: req.body.subject,
-  //   text: `${req.body.fname + ' ' + req.body.lname} (${req.body.email}) says: ${req.body.message}`
-  // };
-  // smtpTrans.sendMail(mailOpts, function (error, response) {
-  //   if (error) {
-  //     console.log(error)
-  //     res.redirect("/" );
-  //   }
-  //   else {
-       res.redirect("/" );
-  //   }
-  // });
+  res.redirect("/" );
 });
 
 
